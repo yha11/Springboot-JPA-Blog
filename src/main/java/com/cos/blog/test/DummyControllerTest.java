@@ -37,12 +37,12 @@ public class DummyControllerTest {
 		System.out.println("password : "+requestUser.getPassword());
 		System.out.println("email : "+requestUser.getEmail());
 		
-		requestUser = userRepository.findById(id).orElseThrow(()-> {
+		User user = userRepository.findById(id).orElseThrow(()-> {
 			return new IllegalArgumentException("수정에 실패하였습니다.");
 		});
 		
-		//user.setPassword(requestUser.getPassword());
-		//user.setEmail(requestUser.getEmail());
+		user.setPassword(requestUser.getPassword());
+		user.setEmail(requestUser.getEmail());
 		
 		//userRepository.save(user);
 		
