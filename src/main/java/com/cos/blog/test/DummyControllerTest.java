@@ -20,34 +20,42 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cos.blog.model.RoleType;
 import com.cos.blog.model.User;
 import com.cos.blog.repository.UserRepository;
+import com.cos.blog.service.DummyService;
+
+import jdk.internal.org.jline.utils.Log;
 
 // html파일이 아니라 data를 리턴해주는 controller = RestController
 @RestController
 public class DummyControllerTest {
+	@Autowired
+	private DummyService dummyService;
 	
 	// save함수는 id를 전달하지 않으면 insert를 해주고
 	// save함수는 id를 전달하면 해당 id에 대한 데이터가 있으면 update를 해주고
 	// save함수는 id를 전달하면 해당 id에 대한 데이터가 없으면 insert를 한다.
 	// email, password
 	
-	@Transactional // 함수 종료 시에 자동 commit 이 됨.
+//	@Transactional // 함수 종료 시에 자동 commit 이 됨.
 	@PutMapping("/dummy/user/{id}")
 	public User updateUser(@PathVariable int id, @RequestBody User requestUser) { // json 데이터를 요청 => Java Object(MessageConverter의 Jackson라이브러리가 변환해서 받아줘요.)
 		System.out.println("id : "+id);
 		System.out.println("password : "+requestUser.getPassword());
 		System.out.println("email : "+requestUser.getEmail());
-		
-		User user = userRepository.findById(id).orElseThrow(()-> {
-			return new IllegalArgumentException("수정에 실패하였습니다.");
-		});
-		
-		user.setPassword(requestUser.getPassword());
-		user.setEmail(requestUser.getEmail());
+		//transaction을 컨트롤에서 시작하는게 아니라 서비스한테 넘김
+		dummyService.updateUser(id, requestUser);
+//		User user = userRepository.findById(id).orElseThrow(()-> {
+//			return new IllegalArgumentException("수정에 실패하였습니다.");
+//		});
+//		
+//		user.setPassword(requestUser.getPassword());
+//		user.setEmail(requestUser.getEmail());
 		
 		//userRepository.save(user);
 		
-		// 더티 체킹
-		
+		// 더티 체킹 log4j 셋팅이 안되어 있네?????
+		//캐쉬에 있는걸 가져오긴 하나 플러쉬 시키고 새로 가져와도 이미 위 서비스에서 디비반영되서 바뀐걸로 가져옴!!
+		//ㅇㅋ?
+		System.out.println("user=>"+dummyService.findUser(id));
 		return null;
 	}
 	
