@@ -3,13 +3,15 @@ let index = {
 			$("#btn-save").on("click", ()=>{ //function(){}이 아니라 ()=>{}를 쓰는 이유 : this를 바인딩하기 위해서!!
 				this.save();
 			});
-			$("#btn-delete").on("click", ()=>{ //function(){}이 아니라 ()=>{}를 쓰는 이유 : this를 바인딩하기 위해서!!
+			$("#btn-delete").on("click", ()=>{
 				this.deleteById();
+			});
+			$("#btn-update").on("click", ()=>{
+				this.update();
 			});
 		},
 		
 		save: function() {
-			//alert("user의 save함수 호출됨");
 			let data = {
 				title: $("#title").val(),
 				content: $("#content").val(),
@@ -32,7 +34,7 @@ let index = {
 		},
 		
 		deleteById: function() {
-			var id = $("#id").text();
+			let id = $("#id").text();
 			
 			$.ajax({
 				type: "DELETE",
@@ -41,6 +43,30 @@ let index = {
 				
 			}).done(function(resp) {
 				alert("삭제가 완료되었습니다.");
+				location.href = "/";
+				
+			}).fail(function(error) {
+				alert(JSON.stringify(error));
+			});
+		},
+		
+		update: function() {
+			let id = $("#id").val();
+			
+			let data = {
+				title: $("#title").val(),
+				content: $("#content").val(),
+			};
+			
+			$.ajax({
+				type: "PUT",
+				url: "/api/board/"+id,
+				data: JSON.stringify(data),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json"
+				
+			}).done(function(resp) {
+				alert("글수정이 완료되었습니다.");
 				location.href = "/";
 				
 			}).fail(function(error) {
